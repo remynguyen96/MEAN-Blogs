@@ -35,6 +35,8 @@ build/Release
 # Dependency directories
 node_modules/
 jspm_packages/
+yarn.lock
+dist
 
 # Typescript v1 declaration files
 typings/
@@ -57,3 +59,29 @@ typings/
 # dotenv environment variables file
 .env
 
+# compiled output
+client/dist
+client/tmp
+client/out-tsc
+
+# dependencies
+client/node_modules
+client/src/environments/environment.env.ts
+
+
+# misc
+client/.sass-cache
+client/connect.lock
+client/coverage
+client/libpeerconnection.log
+client/npm-debug.log
+client/testem.log
+client/typings
+
+# e2e
+client/e2e/*.js
+client/e2e/*.map
+
+# System Files
+client/.DS_Store
+client/Thumbs.db
