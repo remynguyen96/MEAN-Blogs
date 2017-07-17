@@ -4,7 +4,7 @@ export async function listCategory(req, res) {
   const skip = parseInt(req.query.skip, 0);
   const limit = parseInt(req.query.limit, 0);
   try {
-    const categories = await Category.listCategory({skip,limit});
+    const categories = await Category.listCategories({ skip, limit });
     return res.status(200).json(categories);
   } catch (e) {
     return res.status(400).json(e);
@@ -45,7 +45,7 @@ export async function removeCategory(req, res) {
   try {
     const category = await Category.findById(req.params.id);
     await category.remove();
-    return res.sendStatus(200);
+    return res.status(200).json('success');
   } catch (e) {
     return res.status(400).json(e);
   }

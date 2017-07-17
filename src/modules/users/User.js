@@ -5,7 +5,6 @@ import { hashSync, compareSync } from 'bcrypt-nodejs';
 import jwt from 'jsonwebtoken';
 import constants from '../../config/constants';
 import Blog from '../blogs/Blog';
-import { PasswordReg } from './Validation';
 
 const UserSchema = new Schema({
   name : {
@@ -29,17 +28,12 @@ const UserSchema = new Schema({
     type: String,
     trim: true,
     required: [true,'Password is required !'],
-    validate: {
-      validator(password) {
-        return PasswordReg.test(password);
-      },
-      message: '{VALUE} is not match !'
-    }
   },
   avatar: {
     type: String,
     trim: true,
     lowercase: true,
+    default: 'avatar.png',
   },
   ipAddress: {
     type: String,
@@ -53,7 +47,7 @@ const UserSchema = new Schema({
       }
     ]
   }
-});
+},{timestamps: true});
 
 UserSchema.plugin(uniqueValidator, {
   message: '{VALUE} already taken !'
@@ -75,14 +69,16 @@ UserSchema.methods = {
   },
   createToken() {
     return jwt.sign(
-      { id: this._id },
+      { _id: this._id },
       constants.JWT_SECRET,
-      { expiresIn: 1800 } // 30 minutes
+      { expiresIn: 1123800 }
+      // { expiresIn: 1800 } // 30 minutes
     );
   },
-  authJSON() {
+  toAuthJSON() {
     return {
       _id: this._id,
+      name: this.name,
       email: this.email,
       avatar: this.avatar,
       token: `JWT ${this.createToken()}`,
@@ -92,9 +88,10 @@ UserSchema.methods = {
     return {
       _id: this._id,
       name: this.name,
+      avatar: this.avatar,
     };
   },
-  favorites: {
+  _favorites: {
     async blogs(blogId) {
       if(this.favorites.blogs.indexOf(blogId) >= 0) {
         this.favorites.blogs.remove(blogId);
@@ -112,6 +109,13 @@ UserSchema.methods = {
       return false;
     }
   }
+}
+
+UserSchema.statics = {
+  listUsers() {
+    return this.find().sort({createdAt: -1});
+  },
+
 }
 
 export default mongoose.model('User',UserSchema);

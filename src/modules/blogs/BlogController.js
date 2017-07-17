@@ -1,10 +1,11 @@
 import Blog from './Blog';
 import User from '../users/User';
 import multer from 'multer';
+import fs from 'fs';
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
-    cb(null,'./dist/uploads/blogs');
+    cb(null,'./src/uploads/blogs');
   },
   filename: (req, file, cb) => {
     if(!file.originalname.match(/\.(png|jpg|jpeg|gif|svg)$/)){
@@ -37,7 +38,7 @@ export async function uploadImage(req, res){
        }
          return res.status(203).json({success: false, message: 'File was not able to be uploaded !'});
      }
-     return res.status(200).json({success: true, message: 'File was uploaded !'});
+     return res.status(200).json({success: true, message: req.file.filename});
    });
   } catch (e) {
     return res.status(400).json(e);
@@ -57,7 +58,8 @@ export async function listBlogs(req, res) {
 
 export async function detailBlog(req, res) {
   try {
-    const blog = await Blog.findById(req.params.id).populate('author');
+    const blog = await Blog.findOne({'slug' : req.params.slug}).populate('author');
+    // const blog = await Blog.findById(req.params.id).populate('author');
     return res.status(200).json(blog);
   } catch (e) {
     return res.status(400).json(e);
@@ -69,6 +71,39 @@ export async function createBlog(req, res) {
   try {
     const blog = await Blog.createBlog(req.body, req.user._id);
     return res.status(201).json(blog);
+  } catch (e) {
+    return res.status(400).json(e);
+  }
+}
+
+export async function updateBlog(req, res) {
+  try {
+    const blog = await Blog.findOne({'slug' : req.params.slug});
+    if(!blog.author.equals(req.user._id)){
+      return res.sendStatus(401);
+    }
+    Object.keys(req.body).forEach((key) => {
+      blog[key] = req.body[key];
+    });
+    return res.status(200).json(await blog.save());
+  } catch (e) {
+    return res.status(400).json(e);
+  }
+}
+
+export async function deleteBlog(req, res) {
+  try {
+    const blog = await Blog.findOne({'slug' : req.params.slug});
+    if(!blog.author.equals(req.user._id)) {
+      return res.sendStatus(401);
+    }
+    const images = blog.images;
+    fs.unlink(`./src/uploads/blogs/${images}`,(err) => {
+      if(err) throw err;
+    });
+    await blog.remove();
+    // return res.sendStatus(200);
+    return res.status(200).json('success');
   } catch (e) {
     return res.status(400).json(e);
   }
@@ -108,34 +143,6 @@ export async function detailBlogManager(req, res) {
       ...blog,
       favorite
     });
-  } catch (e) {
-    return res.status(400).json(e);
-  }
-}
-
-export async function updateBlog(req, res) {
-  try {
-    const blog = await Blog.findById(req.params.id);
-    if(!blog.author.equals(req.user._id)){
-      return res.sendStatus(401);
-    }
-    Object.keys(req.body).forEach((key) => {
-      blog[key] = req.body[key];
-    });
-    return res.status(200).json(await blog.save());
-  } catch (e) {
-    return res.status(400).json(e);
-  }
-}
-
-export async function deleteBlog(req, res) {
-  try {
-    const blog = await Blog.findById(req.params.id);
-    if(!blog.author.equals(req.user._id)) {
-      return res.sendStatus(401);
-    }
-    await blog.remove();
-    return res.sendStatus(200);
   } catch (e) {
     return res.status(400).json(e);
   }

@@ -25,12 +25,13 @@ const BlogSchema = new Schema({
   images: {
     type: String,
     trim: true,
+    default: 'stories.jpg',
   },
   categories:[
     {
       type: Schema.Types.ObjectId,
       ref: 'Category',
-      // required: [true, 'Category is required !'],
+      required: [true, 'Category is required !'],
     }
   ],
   author: {
@@ -68,7 +69,7 @@ BlogSchema.methods = {
   },
 };
 
-BlogSchema.static = {
+BlogSchema.statics = {
   createBlog(args, author) {
     return this.create({
       ...args,

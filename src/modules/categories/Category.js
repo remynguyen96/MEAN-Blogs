@@ -1,7 +1,6 @@
 import mongoose, {Schema} from 'mongoose';
 import uniqueValidator from 'mongoose-unique-validator';
 
-
 const CategorySchema = new Schema({
   name: {
     type: String,
@@ -13,7 +12,6 @@ const CategorySchema = new Schema({
     type: String,
     trim: true,
     minLength: [5, 'Description category need to be longer !'],
-    required: [true,'Description category is required !'],
   },
 },{timestamps: true});
 
@@ -32,12 +30,12 @@ CategorySchema.methods = {
   }
 };
 
-CategorySchema.static = {
-  listCategory({skip = 0, limit = 5} = {}) {
+CategorySchema.statics = {
+  listCategories({ skip = 0, limit = 5 } = {}) {
     return this.find()
-               .sort({createdAt: -1})
-               .skip(skip)
-               .limit(limit)
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
   },
 }
 

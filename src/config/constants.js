@@ -1,7 +1,10 @@
 const devConfig = {
   MONGO_URL: 'localhost:27017/blogs',
   JWT_SECRET: 'ILOVELIFE',
-  PASSPORTCODE: 'ILOVEMEDITATION',
+
+  PASSPORTCODE: 'I-LOVE-MEDITATION',
+  IV: '#base64IV#',
+  
   MAIL_HOST: 'smtp.mailtrap.io',
   MAIL_PORT: '2525',
   MAIL_USERNAME: 'a1285327665551',
