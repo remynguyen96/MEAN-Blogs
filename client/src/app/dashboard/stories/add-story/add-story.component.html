@@ -1,0 +1,41 @@
+<form [formGroup]="formStory" (ngSubmit)="createNew()">
+  <div fxLayout="row" fxLayoutWrap fxLayoutGap="20px">
+
+    <md-input-container fxFlex="45%" fxFlexAlign="center">
+      <input mdInput #characterCount maxLength="60" placeholder="Name" formControlName='title' (keyup)='convertAlias($event)'>
+      <md-error>This field is required</md-error>
+      <md-hint align="end" aria-live="polite">
+        {{characterCount.value.length}} / 60
+      </md-hint>
+      <md-icon mdSuffix>mode_edit</md-icon>
+    </md-input-container>
+
+    <md-input-container fxFlex="45%" fxFlexAlign="center">
+      <input mdInput placeholder="Slug" formControlName='slug' [value]='alias'>
+      <md-icon mdSuffix>mode_edit</md-icon>
+    </md-input-container>
+
+    <div fxFlex="45%">
+      <input type="file" formControlName='images' (change)="onFiles($event)"  accept=".jpg,.png,.svg,.jpeg,.gif">
+      <img [src]="imagePlaceholder" alt="images">
+    </div>
+
+    <md-select multiple placeholder="Category" fxFlex="45" formControlName='categories'>
+      <md-option *ngFor="let category of listCategory" [value]="category._id">
+        {{ category.name }}
+      </md-option>
+    </md-select>
+
+    <div fxFlex="100" class="description">
+      <tinymce
+         formControlName="description"
+         [elementId]="'my-editor'">
+      </tinymce>
+    </div>
+
+    <div fxFlex fxFlexAlign="center">
+      <button type="submit" [disabled]="!formStory.valid" md-raised-button color='primary'>Add New Story</button>
+    </div>
+  </div>
+
+</form>

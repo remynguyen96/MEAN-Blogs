@@ -1,0 +1,24 @@
+<form [formGroup]="formCategory" (ngSubmit)="createNew()">
+  <div fxLayout="column" fxLayoutAlign="space-around" fxLayoutGap="25px">
+
+    <md-input-container fxFlex fxFlexAlign="center">
+      <input mdInput #characterCount maxLength="60" placeholder="Name" formControlName='name'>
+      <md-error>This field is required</md-error>
+      <md-hint align="end" aria-live="polite">
+        {{characterCount.value.length}} / 60
+      </md-hint>
+    </md-input-container>
+
+    <div fxFlex="80">
+      <tinymce
+         formControlName="description"
+         [elementId]="'my-editor'">
+      </tinymce>
+    </div>
+
+    <div fxFlex fxFlexAlign="center">
+      <button type="submit" [disabled]="!formCategory.valid" md-raised-button color='primary'>Create New Category</button>
+    </div>
+  </div>
+
+</form>

@@ -1,0 +1,23 @@
+<form [formGroup]='formUser' (ngSubmit)="updateUser()">
+  <div fxLayout="column" fxLayoutGap="20px">
+
+    <md-input-container fxFlex fxFlexAlign="center">
+      <input mdInput #characterCount maxLength="60" placeholder="Name" formControlName='name' [value]='userDetail?.name'>
+      <md-error>This field is required</md-error>
+      <md-hint align="end" aria-live="polite">
+        {{characterCount.value.length}} / 60
+      </md-hint>
+      <md-icon mdSuffix>mode_edit</md-icon>
+    </md-input-container>
+
+    <div fxFlex fxFlexAlign="center">
+      <input type="file" formControlName='avatar' (change)="onFiles($event)"  accept=".jpg,.png,.svg,.jpeg,.gif">
+      <img *ngIf='loading' [src]="urlService + userDetail?.avatar" alt="avatar">
+      <img *ngIf='!loading' [src]="imagePlaceholder" alt="avatar">
+    </div>
+
+    <div fxFlex fxFlexAlign="center">
+      <button type="submit" [disabled]="!formUser.valid" md-raised-button color='primary'>Update</button>
+    </div>
+  </div>
+</form>
