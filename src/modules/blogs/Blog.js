@@ -49,6 +49,15 @@ BlogSchema.plugin(uniqueValidator, {
   message: '{VALUE} already taken !'
 });
 
+// BlogSchema.pre('find', function(next) {
+//     this.populate({
+//         path: 'author',
+//         select: 'username created - _id'
+//     });
+//     next();
+// });
+
+
 // BlogSchema.pre('validate', function (next){
 //   next();
 // });
@@ -82,6 +91,9 @@ BlogSchema.statics = {
                .skip(skip)
                .limit(limit)
                .populate('author');
+  },
+  searchBlogs(query) {
+    return this.find({'title': new RegExp(query, "i")}).populate('author');
   },
   incFavoriteCount(blogId) {
     return this.findByIdAndUpdate(blogId, { total: {favoriteCount: 1} });

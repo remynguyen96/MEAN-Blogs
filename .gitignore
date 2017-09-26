@@ -60,7 +60,7 @@ typings/
 .env
 
 # compiled output
-client/dist
+src/dist
 client/tmp
 client/out-tsc
 

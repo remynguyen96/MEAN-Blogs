@@ -37,11 +37,11 @@ const localStrategy = new LocalStrategy(
     }
   },
 );
-
 // Jwt strategy
 
 const jwtOpts = {
-  jwtFromRequest: ExtractJwt.fromAuthHeader('authorization'),
+  // jwtFromRequest: ExtractJwt.fromAuthHeader('authorization'),
+  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
   secretOrKey: constants.JWT_SECRET,
 };
 

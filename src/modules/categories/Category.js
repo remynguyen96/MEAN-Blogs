@@ -13,7 +13,11 @@ const CategorySchema = new Schema({
     trim: true,
     minLength: [5, 'Description category need to be longer !'],
   },
-},{timestamps: true});
+  createdAt: {
+    type: Date,
+    default: Date.now()
+  }
+});
 
 CategorySchema.plugin(uniqueValidator, {
   message: `{VALUE} already taken !`,

@@ -1,5 +1,5 @@
 const devConfig = {
-  MONGO_URL: 'localhost:27017/blogs',
+  MONGO_URL: 'mongodb://localhost:27017/blogs',
   JWT_SECRET: 'ILOVELIFE',
 
   PASSPORTCODE: 'I-LOVE-MEDITATION',
@@ -12,11 +12,11 @@ const devConfig = {
 };
 
 const prodConfig = {
-  MONGO_URL: 'localhost:27017/blogs',
+  MONGO_URL: 'mongodb://localhost:27017/blogs',
 };
 
 const defaultConfig = {
-  PORT: process.env.PORT || 4000,
+  PORT: process.env.PORT || 4600,
 };
 
 function envConfig(env) {

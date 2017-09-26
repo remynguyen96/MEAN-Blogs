@@ -64,7 +64,7 @@ module.exports =
 /******/ 	__webpack_require__.p = "";
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 14);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -78,7 +78,7 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 const devConfig = {
-  MONGO_URL: 'localhost:27017/blogs',
+  MONGO_URL: 'mongodb://localhost:27017/blogs',
   JWT_SECRET: 'ILOVELIFE',
 
   PASSPORTCODE: 'I-LOVE-MEDITATION',
@@ -91,11 +91,11 @@ const devConfig = {
 };
 
 const prodConfig = {
-  MONGO_URL: 'localhost:27017/blogs'
+  MONGO_URL: 'mongodb://localhost:27017/blogs'
 };
 
 const defaultConfig = {
-  PORT: process.env.PORT || 4000
+  PORT: process.env.PORT || 4600
 };
 
 function envConfig(env) {
@@ -133,15 +133,15 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.authJwt = exports.authLocal = undefined;
 
-var _passport = __webpack_require__(10);
+var _passport = __webpack_require__(11);
 
 var _passport2 = _interopRequireDefault(_passport);
 
-var _passportLocal = __webpack_require__(29);
+var _passportLocal = __webpack_require__(33);
 
 var _passportLocal2 = _interopRequireDefault(_passportLocal);
 
-var _passportJwt = __webpack_require__(28);
+var _passportJwt = __webpack_require__(32);
 
 var _User = __webpack_require__(4);
 
@@ -185,11 +185,11 @@ const localStrategy = new _passportLocal2.default(localOpts, async (email, passw
     return done(e, false);
   }
 });
-
 // Jwt strategy
 
 const jwtOpts = {
-  jwtFromRequest: _passportJwt.ExtractJwt.fromAuthHeader('authorization'),
+  // jwtFromRequest: ExtractJwt.fromAuthHeader('authorization'),
+  jwtFromRequest: _passportJwt.ExtractJwt.fromAuthHeaderWithScheme('JWT'),
   secretOrKey: _constants2.default.JWT_SECRET
 };
 
@@ -226,7 +226,7 @@ var _mongoose = __webpack_require__(2);
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
-var _validator = __webpack_require__(30);
+var _validator = __webpack_require__(34);
 
 var _validator2 = _interopRequireDefault(_validator);
 
@@ -234,9 +234,9 @@ var _mongooseUniqueValidator = __webpack_require__(5);
 
 var _mongooseUniqueValidator2 = _interopRequireDefault(_mongooseUniqueValidator);
 
-var _bcryptNodejs = __webpack_require__(22);
+var _bcryptNodejs = __webpack_require__(25);
 
-var _jsonwebtoken = __webpack_require__(26);
+var _jsonwebtoken = __webpack_require__(9);
 
 var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
 
@@ -254,7 +254,8 @@ const UserSchema = new _mongoose.Schema({
   name: {
     type: String,
     trim: true,
-    required: [true, 'Name is required !']
+    required: [true, 'Name is required !'],
+    maxLength: [30, 'Name has max length is 30 letters !']
   },
   email: {
     type: String,
@@ -283,6 +284,14 @@ const UserSchema = new _mongoose.Schema({
     type: String,
     required: [true, 'IP Address is required !']
   },
+  confirm: {
+    type: Boolean,
+    default: false
+  },
+  token: {
+    type: String,
+    default: null
+  },
   favorites: {
     blogs: [{
       type: _mongoose.Schema.Types.ObjectId,
@@ -310,7 +319,7 @@ UserSchema.methods = {
     return (0, _bcryptNodejs.compareSync)(password, this.password);
   },
   createToken() {
-    return _jsonwebtoken2.default.sign({ _id: this._id }, _constants2.default.JWT_SECRET, { expiresIn: 1123800
+    return _jsonwebtoken2.default.sign({ _id: this._id }, _constants2.default.JWT_SECRET, { expiresIn: '2m' //10h, 7d,
       // { expiresIn: 1800 } // 30 minutes
     });
   },
@@ -320,7 +329,8 @@ UserSchema.methods = {
       name: this.name,
       email: this.email,
       avatar: this.avatar,
-      token: `JWT ${this.createToken()}`
+      token: `${this.createToken()}`
+      // token: `JWT ${this.createToken()}`,
     };
   },
   toJSON() {
@@ -354,7 +364,6 @@ UserSchema.statics = {
   listUsers() {
     return this.find().sort({ createdAt: -1 });
   }
-
 };
 
 exports.default = _mongoose2.default.model('User', UserSchema);
@@ -432,6 +441,15 @@ BlogSchema.plugin(_mongooseUniqueValidator2.default, {
   message: '{VALUE} already taken !'
 });
 
+// BlogSchema.pre('find', function(next) {
+//     this.populate({
+//         path: 'author',
+//         select: 'username created - _id'
+//     });
+//     next();
+// });
+
+
 // BlogSchema.pre('validate', function (next){
 //   next();
 // });
@@ -461,6 +479,9 @@ BlogSchema.statics = {
   listBlogs({ skip = 0, limit = 10 } = {}) {
     return this.find().sort({ createdAt: -1 }).skip(skip).limit(limit).populate('author');
   },
+  searchBlogs(query) {
+    return this.find({ 'title': new RegExp(query, "i") }).populate('author');
+  },
   incFavoriteCount(blogId) {
     return this.findByIdAndUpdate(blogId, { total: { favoriteCount: 1 } });
   },
@@ -487,16 +508,22 @@ module.exports = require("fs");
 /* 9 */
 /***/ (function(module, exports) {
 
-module.exports = require("multer");
+module.exports = require("jsonwebtoken");
 
 /***/ }),
 /* 10 */
 /***/ (function(module, exports) {
 
-module.exports = require("passport");
+module.exports = require("multer");
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports) {
+
+module.exports = require("passport");
+
+/***/ }),
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -506,23 +533,23 @@ Object.defineProperty(exports, "__esModule", {
   value: true
 });
 
-var _morgan = __webpack_require__(27);
+var _morgan = __webpack_require__(29);
 
 var _morgan2 = _interopRequireDefault(_morgan);
 
-var _bodyParser = __webpack_require__(23);
+var _bodyParser = __webpack_require__(26);
 
 var _bodyParser2 = _interopRequireDefault(_bodyParser);
 
-var _compression = __webpack_require__(24);
+var _compression = __webpack_require__(27);
 
 var _compression2 = _interopRequireDefault(_compression);
 
-var _helmet = __webpack_require__(25);
+var _helmet = __webpack_require__(28);
 
 var _helmet2 = _interopRequireDefault(_helmet);
 
-var _passport = __webpack_require__(10);
+var _passport = __webpack_require__(11);
 
 var _passport2 = _interopRequireDefault(_passport);
 
@@ -545,76 +572,96 @@ exports.default = app => {
 };
 
 /***/ }),
-/* 12 */
+/* 13 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
 Object.defineProperty(exports, "__esModule", {
-  value: true
+    value: true
 });
 
-var _Routes = __webpack_require__(20);
+var _Routes = __webpack_require__(23);
 
 var _Routes2 = _interopRequireDefault(_Routes);
 
-var _Routes3 = __webpack_require__(16);
+var _Routes3 = __webpack_require__(19);
 
 var _Routes4 = _interopRequireDefault(_Routes3);
 
-var _Routes5 = __webpack_require__(19);
+var _Routes5 = __webpack_require__(22);
 
 var _Routes6 = _interopRequireDefault(_Routes5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 exports.default = app => {
-  app.use((req, res, next) => {
-    res.header("Access-Control-Allow-Origin", "*");
-    res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
-    next();
-  });
-  app.use('/api/users', _Routes2.default);
-  app.use('/api/blogs', _Routes4.default);
-  app.use('/api/categories', _Routes6.default);
+    app.use((req, res, next) => {
+        res.header("Access-Control-Allow-Origin", "*");
+        res.header('Access-Control-Allow-Methods', 'GET, POST, PATCH, DELETE, OPTIONS');
+        res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+        next();
+    });
+    app.use('/api/users', _Routes2.default);
+    app.use('/api/blogs', _Routes4.default);
+    app.use('/api/categories', _Routes6.default);
 };
 
 /***/ }),
-/* 13 */
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = require("cookie-parser");
+
+/***/ }),
+/* 15 */
 /***/ (function(module, exports) {
 
 module.exports = require("express-validator");
 
 /***/ }),
-/* 14 */
+/* 16 */
+/***/ (function(module, exports) {
+
+module.exports = require("path");
+
+/***/ }),
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-
+/* WEBPACK VAR INJECTION */(function(__dirname) {
 
 var _express = __webpack_require__(1);
 
 var _express2 = _interopRequireDefault(_express);
 
-var _constants = __webpack_require__(0);
+var _path = __webpack_require__(16);
 
-var _constants2 = _interopRequireDefault(_constants);
-
-var _expressValidator = __webpack_require__(13);
-
-var _expressValidator2 = _interopRequireDefault(_expressValidator);
+var _path2 = _interopRequireDefault(_path);
 
 var _mongoose = __webpack_require__(2);
 
 var _mongoose2 = _interopRequireDefault(_mongoose);
 
-var _middleware = __webpack_require__(11);
+var _expressValidator = __webpack_require__(15);
+
+var _expressValidator2 = _interopRequireDefault(_expressValidator);
+
+var _cookieParser = __webpack_require__(14);
+
+var _cookieParser2 = _interopRequireDefault(_cookieParser);
+
+var _constants = __webpack_require__(0);
+
+var _constants2 = _interopRequireDefault(_constants);
+
+var _middleware = __webpack_require__(12);
 
 var _middleware2 = _interopRequireDefault(_middleware);
 
-var _modules = __webpack_require__(12);
+var _modules = __webpack_require__(13);
 
 var _modules2 = _interopRequireDefault(_modules);
 
@@ -622,38 +669,59 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /* eslint-disable no-console */
 const app = (0, _express2.default)();
+app.use((0, _cookieParser2.default)());
 // NOTE: Setup Database
 _mongoose2.default.Promise = global.Promise;
+_mongoose2.default.set('debug', true);
 try {
-  _mongoose2.default.connect(_constants2.default.MONGO_URL);
+  _mongoose2.default.connect(_constants2.default.MONGO_URL, {
+    useMongoClient: true
+  });
 } catch (err) {
-  _mongoose2.default.createConnection(_constants2.default.MONGO_URL);
+  _mongoose2.default.createConnection(_constants2.default.MONGO_URL, {
+    useMongoClient: true
+  });
 }
-
-_mongoose2.default.connection.once('open', () => console.log('      MongoDB Running')).on('error', console.error.bind(console, 'MongoDB connection error: '));
+_mongoose2.default.connection.once('open', () => console.log('MongoDB Running')).on('error', e => {
+  throw e;
+});
 
 // NOTE: Setting url public
 app.use('/images', _express2.default.static('src/uploads'));
-
 // NOTE: Setup Middleware
 (0, _middleware2.default)(app);
 // NOTE: Setup Router
 app.use((0, _expressValidator2.default)());
 (0, _modules2.default)(app);
 
+// app.use(express.static(path.join(__dirname, 'src/views'))); --> not working
+app.use(_express2.default.static('src/views'));
+app.get('/', (req, res) => {
+  return res.sendFile(_path2.default.join(__dirname, 'index.html'));
+});
+// http://localhost:4600/index.html
+
+app.get('/page', (req, res) => {
+  return res.sendFile(_path2.default.join(__dirname, 'login-page.html'));
+});
+// http://localhost:4600/page.html
+
+// app.get('/*', (req, res) => {
+//   res.sendFile(path.join(__dirname, 'index.html'));
+// });
+
 // NOTE: Setup Server
 app.listen(_constants2.default.PORT, err => {
   if (err) {
     throw err;
   } else {
-    console.log(`
-      Server Running On Port : ${_constants2.default.PORT} With ${process.env.NODE_ENV}
-    `);
+    console.log(`Server Running On Port : ${_constants2.default.PORT} With ${process.env.NODE_ENV}`);
   }
 });
+/* WEBPACK VAR INJECTION */}.call(exports, "/"))
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -670,6 +738,8 @@ exports.updateBlog = updateBlog;
 exports.deleteBlog = deleteBlog;
 exports.listBlogsManager = listBlogsManager;
 exports.detailBlogManager = detailBlogManager;
+exports.searchBlogs = searchBlogs;
+exports.openGraph = openGraph;
 
 var _Blog = __webpack_require__(6);
 
@@ -679,13 +749,17 @@ var _User = __webpack_require__(4);
 
 var _User2 = _interopRequireDefault(_User);
 
-var _multer = __webpack_require__(9);
+var _multer = __webpack_require__(10);
 
 var _multer2 = _interopRequireDefault(_multer);
 
 var _fs = __webpack_require__(8);
 
 var _fs2 = _interopRequireDefault(_fs);
+
+var _openGraphScraper = __webpack_require__(31);
+
+var _openGraphScraper2 = _interopRequireDefault(_openGraphScraper);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -736,6 +810,7 @@ async function listBlogs(req, res) {
   const limit = parseInt(req.query.limit, 0);
   try {
     const blogs = await _Blog2.default.listBlogs({ skip, limit });
+    // ?skip=1&limit=2
     return res.status(200).json(blogs);
   } catch (e) {
     return res.status(400).json(e);
@@ -826,8 +901,36 @@ async function detailBlogManager(req, res) {
   }
 }
 
+async function searchBlogs(req, res) {
+  try {
+    const keyQuery = req.query.q;
+    const blogs = await _Blog2.default.searchBlogs(keyQuery);
+    return res.status(200).json(blogs);
+  } catch (e) {
+    return res.status(400).json(e);
+  }
+}
+// NOTE: Example opengraph for node
+
+async function openGraph(req, res) {
+  try {
+    const url = req.body.opengraph;
+    const options = {
+      'url': url
+    };
+    (0, _openGraphScraper2.default)(options, (err, results) => {
+      if (err) {
+        return err;
+      }
+      return res.status(200).json(results);
+    });
+  } catch (e) {
+    return res.status(400).json(e);
+  }
+}
+
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -841,7 +944,7 @@ var _express = __webpack_require__(1);
 
 var _passport = __webpack_require__(3);
 
-var _BlogController = __webpack_require__(15);
+var _BlogController = __webpack_require__(18);
 
 var BlogController = _interopRequireWildcard(_BlogController);
 
@@ -851,15 +954,19 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 // import BlogValidation from './Validation';
 
 const routes = new _express.Router();
-routes.get('/', BlogController.listBlogs);
-routes.get('/:slug', BlogController.detailBlog);
-// ///////////////////////////////////
+
 routes.post('/upload-image', _passport.authJwt, BlogController.uploadImage);
 routes.post('/create', _passport.authJwt, BlogController.createBlog);
 routes.patch('/update/:slug', _passport.authJwt, BlogController.updateBlog);
 routes.delete('/delete/:slug', _passport.authJwt, BlogController.deleteBlog);
 routes.get('/manager-list-blogs', _passport.authJwt, BlogController.listBlogsManager);
 routes.get('/detail-blogs/:slug', _passport.authJwt, BlogController.detailBlogManager);
+// ///////////////////////////////////
+routes.get('/search-blogs', BlogController.searchBlogs);
+routes.get('/', BlogController.listBlogs);
+routes.get('/:slug', BlogController.detailBlog);
+
+routes.post('/opengraph', BlogController.openGraph);
 
 // routes.get('/create', authJwt, validate(BlogValidation.createPost), BlogController.createBlog);
 // routes.get('/update/:slug', authJwt, validate(BlogValidation.createPost), BlogController.updateBlog);
@@ -868,7 +975,7 @@ routes.get('/detail-blogs/:slug', _passport.authJwt, BlogController.detailBlogMa
 exports.default = routes;
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -899,8 +1006,12 @@ const CategorySchema = new _mongoose.Schema({
     type: String,
     trim: true,
     minLength: [5, 'Description category need to be longer !']
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now()
   }
-}, { timestamps: true });
+});
 
 CategorySchema.plugin(_mongooseUniqueValidator2.default, {
   message: `{VALUE} already taken !`
@@ -926,7 +1037,7 @@ CategorySchema.statics = {
 exports.default = _mongoose2.default.model('Category', CategorySchema);
 
 /***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -941,7 +1052,7 @@ exports.addCategory = addCategory;
 exports.editCategory = editCategory;
 exports.removeCategory = removeCategory;
 
-var _Category = __webpack_require__(17);
+var _Category = __webpack_require__(20);
 
 var _Category2 = _interopRequireDefault(_Category);
 
@@ -999,7 +1110,7 @@ async function removeCategory(req, res) {
 }
 
 /***/ }),
-/* 19 */
+/* 22 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1013,7 +1124,7 @@ var _express = __webpack_require__(1);
 
 var _passport = __webpack_require__(3);
 
-var _CategoryController = __webpack_require__(18);
+var _CategoryController = __webpack_require__(21);
 
 var CategoryController = _interopRequireWildcard(_CategoryController);
 
@@ -1040,7 +1151,7 @@ exports.default = routes;
 // U2FsdGVkX19CqYjfxvUINqgtXvEijOP38ctK2gvEaUI=
 
 /***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1054,7 +1165,7 @@ var _express = __webpack_require__(1);
 
 var _passport = __webpack_require__(3);
 
-var _UserController = __webpack_require__(21);
+var _UserController = __webpack_require__(24);
 
 var UserController = _interopRequireWildcard(_UserController);
 
@@ -1066,6 +1177,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj;
 const routes = new _express.Router();
 
 routes.post('/sign-up', UserController.signUp);
+routes.get('/confirm/:token', UserController.confirmUser);
 // routes.post('/sign-up', validate(UserValidation.signUp), UserController.signUp);
 routes.post('/sign-in', _passport.authLocal, UserController.signIn);
 
@@ -1078,7 +1190,7 @@ routes.delete('/delete/:id', _passport.authJwt, UserController.deleteUser);
 exports.default = routes;
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1089,6 +1201,7 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.uploadAvatar = uploadAvatar;
 exports.signUp = signUp;
+exports.confirmUser = confirmUser;
 exports.signIn = signIn;
 exports.listUsers = listUsers;
 exports.detailUser = detailUser;
@@ -1103,7 +1216,7 @@ var _cryptoJs = __webpack_require__(7);
 
 var _cryptoJs2 = _interopRequireDefault(_cryptoJs);
 
-var _multer = __webpack_require__(9);
+var _multer = __webpack_require__(10);
 
 var _multer2 = _interopRequireDefault(_multer);
 
@@ -1111,11 +1224,31 @@ var _constants = __webpack_require__(0);
 
 var _constants2 = _interopRequireDefault(_constants);
 
+var _nodemailer = __webpack_require__(30);
+
+var _nodemailer2 = _interopRequireDefault(_nodemailer);
+
 var _fs = __webpack_require__(8);
 
 var _fs2 = _interopRequireDefault(_fs);
 
+var _jsonwebtoken = __webpack_require__(9);
+
+var _jsonwebtoken2 = _interopRequireDefault(_jsonwebtoken);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+// const { check, validationResult } = require('express-validator/check');
+
+const transporter = _nodemailer2.default.createTransport({
+  host: _constants2.default.MAIL_HOST,
+  port: _constants2.default.MAIL_PORT,
+  secure: false, //true with port 465
+  auth: {
+    user: _constants2.default.MAIL_USERNAME,
+    pass: _constants2.default.MAIL_PASSWORD
+  }
+});
 
 const storage = _multer2.default.diskStorage({
   destination(req, file, cb) {
@@ -1162,9 +1295,9 @@ async function uploadAvatar(req, res) {
 
 async function signUp(req, res) {
   try {
-    req.body.ipAddress = decryptCode(req.body.ipAddress);
-    req.body.password = decryptCode(req.body.password);
-    req.body.passwordConfirm = decryptCode(req.body.passwordConfirm);
+    // req.body.ipAddress = decryptCode(req.body.ipAddress);
+    // req.body.password = decryptCode(req.body.password);
+    // req.body.passwordConfirm = decryptCode(req.body.passwordConfirm);
     req.checkBody('name', 'Name is required').notEmpty();
     req.checkBody('ipAddress', 'Ip address is not valid').isIP();
     req.checkBody('email', 'Invalid email').isEmail();
@@ -1181,7 +1314,46 @@ async function signUp(req, res) {
       return res.status(203).json({ errors: 'Email is existed !' });
     }
     const user = await _User2.default.create(req.body);
+    user.token = user.toAuthJSON().token;
+    user.save();
+    console.log(user.token);
+    const mailOptions = {
+      from: `Demo Express Js With Remy Nguyen 👻 <remynguyen@enlightened.com>`,
+      to: `${user.email}@gmail.com`,
+      subject: `Hello ${user.name} ✔ This is Mail Confirm From Blog JS`,
+      text: 'Good Boy, Please Confirm Email Now !!!',
+      html: `
+      <h2 style="font-size:32px; color: #50D583; text-align:center">
+            Good Morning ${user.name} !!!
+      </h2>
+      <a style="display: block;font-size:27px; color: #174DCF; text-align:center"          href="http://localhost:4600/api/users/confirm/${user.token}">
+        Confirm Email
+      </a>
+      <p style="text-align: center; font-size: 20px; color: #3A3A3A"><i>Pleace Confirm Email Register..... !</i></p>
+    `
+    };
+    transporter.sendMail(mailOptions, (error, info) => {
+      if (error) {
+        return console.log(error);
+      }
+      console.log('Message %s sent: %s', info.messageId, info.response);
+    });
     return res.status(201).json(user.toAuthJSON());
+  } catch (e) {
+    return res.status(400).json(e);
+  }
+}
+
+async function confirmUser(req, res) {
+  try {
+    let token = req.params.token;
+    const confirm = _jsonwebtoken2.default.verify(token, _constants2.default.JWT_SECRET);
+    if (confirm) {
+      const user = await _User2.default.findById(confirm._id);
+      user.confirm = true;
+      await user.save();
+      return res.redirect('http://localhost:4600/');
+    }
   } catch (e) {
     return res.status(400).json(e);
   }
@@ -1250,55 +1422,61 @@ async function deleteUser(req, res) {
 }
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, exports) {
 
 module.exports = require("bcrypt-nodejs");
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, exports) {
 
 module.exports = require("body-parser");
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, exports) {
 
 module.exports = require("compression");
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports) {
 
 module.exports = require("helmet");
 
 /***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
-module.exports = require("jsonwebtoken");
-
-/***/ }),
-/* 27 */
+/* 29 */
 /***/ (function(module, exports) {
 
 module.exports = require("morgan");
 
 /***/ }),
-/* 28 */
+/* 30 */
+/***/ (function(module, exports) {
+
+module.exports = require("nodemailer");
+
+/***/ }),
+/* 31 */
+/***/ (function(module, exports) {
+
+module.exports = require("open-graph-scraper");
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports) {
 
 module.exports = require("passport-jwt");
 
 /***/ }),
-/* 29 */
+/* 33 */
 /***/ (function(module, exports) {
 
 module.exports = require("passport-local");
 
 /***/ }),
-/* 30 */
+/* 34 */
 /***/ (function(module, exports) {
 
 module.exports = require("validator");

@@ -2,6 +2,9 @@ import Blog from './Blog';
 import User from '../users/User';
 import multer from 'multer';
 import fs from 'fs';
+import ogs from 'open-graph-scraper';
+
+
 
 const storage = multer.diskStorage({
   destination(req, file, cb) {
@@ -49,7 +52,8 @@ export async function listBlogs(req, res) {
   const skip = parseInt(req.query.skip, 0);
   const limit = parseInt(req.query.limit, 0);
   try {
-    const blogs = await Blog.listBlogs({skip, limit})
+    const blogs = await Blog.listBlogs({skip, limit});
+        // ?skip=1&limit=2
     return res.status(200).json(blogs);
   } catch (e) {
     return res.status(400).json(e);
@@ -147,3 +151,35 @@ export async function detailBlogManager(req, res) {
     return res.status(400).json(e);
   }
 }
+
+
+export async function searchBlogs(req, res) {
+  try {
+    const keyQuery = req.query.q;
+    const blogs = await Blog.searchBlogs(keyQuery);
+    return res.status(200).json(blogs);
+  } catch (e) {
+    return res.status(400).json(e);
+  }
+}
+// NOTE: Example opengraph for node
+
+export async function openGraph(req, res) {
+  try {
+    const url = req.body.opengraph;
+    const options =  {
+      'url': url
+    };
+    ogs(options, (err, results) => {
+      if(err) {
+        return err;
+      }
+      return res.status(200).json(results);
+    });
+
+  } catch (e) {
+    return res.status(400).json(e);
+  }
+}
+
+

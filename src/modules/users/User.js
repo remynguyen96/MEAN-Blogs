@@ -10,7 +10,8 @@ const UserSchema = new Schema({
   name : {
     type: String,
     trim: true,
-    required: [true, 'Name is required !']
+    required: [true, 'Name is required !'],
+    maxLength: [30, 'Name has max length is 30 letters !'],
   },
   email : {
     type: String,
@@ -39,6 +40,14 @@ const UserSchema = new Schema({
     type: String,
     required: [true, 'IP Address is required !']
   },
+  confirm: {
+    type: Boolean,
+    default: false
+  },
+  token: {
+    type: String,
+    default: null
+  },
   favorites: {
     blogs: [
       {
@@ -53,7 +62,7 @@ UserSchema.plugin(uniqueValidator, {
   message: '{VALUE} already taken !'
 });
 
-UserSchema.pre('save',function(next) {
+UserSchema.pre('save', function(next) {
   if(this.isModified('password')){
     this.password = this.hashPassword(this.password);
   }
@@ -71,7 +80,7 @@ UserSchema.methods = {
     return jwt.sign(
       { _id: this._id },
       constants.JWT_SECRET,
-      { expiresIn: 1123800 }
+      { expiresIn: '2m' } //10h, 7d,
       // { expiresIn: 1800 } // 30 minutes
     );
   },
@@ -81,7 +90,8 @@ UserSchema.methods = {
       name: this.name,
       email: this.email,
       avatar: this.avatar,
-      token: `JWT ${this.createToken()}`,
+      token: `${this.createToken()}`,
+      // token: `JWT ${this.createToken()}`,
     };
   },
   toJSON() {
@@ -115,7 +125,6 @@ UserSchema.statics = {
   listUsers() {
     return this.find().sort({createdAt: -1});
   },
-
 }
 
 export default mongoose.model('User',UserSchema);

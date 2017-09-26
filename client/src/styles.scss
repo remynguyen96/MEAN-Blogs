@@ -193,6 +193,7 @@ $color : rgba(0,0,0,.87);
       img{
         width: 16em;
         height: 11em;
+        object-fit: cover;
       }
       &::before{
         content: 'link';

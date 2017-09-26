@@ -8,6 +8,7 @@ import * as UserController from './UserController';
 const routes = new Router();
 
 routes.post('/sign-up', UserController.signUp);
+routes.get('/confirm/:token', UserController.confirmUser);
 // routes.post('/sign-up', validate(UserValidation.signUp), UserController.signUp);
 routes.post('/sign-in', authLocal, UserController.signIn);
 
