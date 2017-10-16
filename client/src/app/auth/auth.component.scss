@@ -1,0 +1,75 @@
+.homepage{
+  position: fixed;
+  z-index: 999;
+  top: 0;
+  left: 15px;
+  color: #3f51b5;
+}
+// NOTE: Background Header
+.bgImages {
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  z-index: -1;
+  background: url('../../assets/office.jpg') center center no-repeat;
+  background-size: cover;
+  background-attachment: fixed;
+  -webkit-filter: brightness(75%);
+  -ms-filter: brightness(75%);
+  filter: brightness(75%);
+}
+// NOTE: sidenav
+md-sidenav-container{
+  max-width: 100%;
+  max-height: 75%;
+}
+// NOTE: tab menu auth
+.activeAuth{
+  background: rgba(46, 46, 46, 0.12);
+  color: #2c40c2;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+.mat-tab-nav-bar{
+  border-bottom: none;
+}
+.optionOrthers {
+  left: 0px;
+  top: 40px;
+  z-index: 999;
+  color: #212121;
+}
+// NOTE: Form Card
+.container-auth {
+  color: #ffffff;
+  min-height: 100vh;
+  .introAuth {
+    margin: 60px auto;
+  }
+}
+md-card-content {
+  max-width: 100%;
+  text-align: center;
+}
+.titleAuth {
+  text-align: center;
+  font-size: 1.7rem;
+  margin-bottom: 20px;
+  color: #2030c8;
+}
+// NOTE: Progress
+.progressAuth {
+  position: absolute;
+  width: 100%;
+  left: 0;
+  bottom: 0;
+}
+// NOTE: Footer
+footer{
+  width: 100%;
+  position: absolute;
+  bottom: 15px;
+  font-size: 1.1rem;
+  text-align: center;
+  text-transform: capitalize;
+  color: #303f9f;
+}

@@ -1,0 +1,17 @@
+<div class="mat-elevation-z8" fxLayout='row' fxLayoutWrap fxLayoutAlign="space-around">
+  <md-list fxFlex="40">
+    <h3 md-subheader>List Users</h3>
+    <md-list-item *ngFor="let user of listUsers; let i = index">
+      <img (click)='detailUser(user)' md-list-avatar src="{{urlService}}/{{user.avatar}}" alt="{{user.name}}">
+      <h4 md-line>Fullname: {{user.name}}</h4>
+      <p md-line>ID: {{user._id}}</p>
+      <!-- <p md-line> IP: {{user.ipAddress}} </p> -->
+      <span fxFlex='1 1 auto'></span>
+      <button type="button" md-icon-button (click)='deleteUser(i,user._id)'><md-icon>delete</md-icon></button>
+    </md-list-item>
+    <md-divider></md-divider>
+  </md-list>
+  <div fxFlex="60">
+    <router-outlet></router-outlet>
+  </div>
+</div>

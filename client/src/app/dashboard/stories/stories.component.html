@@ -1,0 +1,19 @@
+<div fxLayout='row' fxLayoutWrap fxLayoutAlign="space-around">
+  <div fxFlex="80" fxFlexAlign="center" class="mat-elevation-z8">
+    <router-outlet></router-outlet>
+  </div>
+
+  <div fxFlex='60' class="mat-elevation-z12">
+    <md-toolbar color="primary">
+      <span fxFlex fxFlexOffset="32">List Stories</span>
+
+      <md-toolbar-row *ngFor="let item of listStories; let i = index">
+        <a [routerLink]="['edit', item.slug]">{{item.title}}</a>
+        <span fxFlex='1 1 auto'></span>
+        <button md-icon-button (click)="delete(i, item.slug)"><md-icon>delete</md-icon></button>
+      </md-toolbar-row>
+
+    </md-toolbar>
+  </div>
+
+</div>

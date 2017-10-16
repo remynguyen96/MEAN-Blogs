@@ -1,0 +1,37 @@
+<form [formGroup]="formCategory" (ngSubmit)="editCategory()">
+  <div fxLayout="row" fxLayoutWrap fxLayoutAlign="space-around" fxLayoutGap="20px">
+
+    <md-input-container fxFlex="45">
+      <input mdInput #characterCount maxLength="60" placeholder="Name" formControlName='name'>
+      <md-error>This field is required</md-error>
+      <md-hint align="end" aria-live="polite">
+        {{characterCount.value.length}} / 60
+      </md-hint>
+    </md-input-container>
+
+    <md-input-container fxFlex="45">
+      <input mdInput #characterCount maxLength="60" placeholder="Slug" formControlName='slug'>
+      <md-error>This field is required</md-error>
+      <md-hint align="end" aria-live="polite">
+        {{characterCount.value.length}} / 60
+      </md-hint>
+    </md-input-container>
+
+    <md-select multiple placeholder="Category" fxFlex="20" formControlName='categories'>
+      <md-option *ngFor="let category of listCategory" [value]="category._id">
+        {{ category.name }}
+      </md-option>
+    </md-select>
+
+    <div fxFlex="75">
+      <tinymce formControlName="description" [elementId]="'description'">
+      </tinymce>
+    </div>
+
+    <div fxFlex>
+      <button type="submit" [disabled]="!formCategory.valid" md-raised-button color='primary'>Edit Category</button>
+    </div>
+
+  </div>
+
+</form>

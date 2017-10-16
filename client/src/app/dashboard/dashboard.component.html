@@ -1,0 +1,20 @@
+<md-list>
+  <md-list-item>
+    <img md-list-avatar src="{{urlService}}/{{infoUser.avatar}}" alt="{{infoUser.name}}">
+    <h3 md-line> {{infoUser?.name}} </h3>
+    <p md-line>
+      <span>{{infoUser?.email}} </span>
+      <span> -- {{infoUser?.id}} </span>
+    </p>
+    <button md-mini-fab fxFlex='1 1 auto' (click)='btnLogout()'><md-icon>power_settings_new</md-icon></button>
+  </md-list-item>
+  <md-divider></md-divider>
+</md-list>
+
+<nav md-tab-nav-bar>
+  <a md-tab-link *ngFor="let nav of routes" [routerLink]="nav.link" routerLinkActive #rla="routerLinkActive" [active]="rla.isActive">
+    {{nav.label}}
+  </a>
+</nav>
+
+<router-outlet></router-outlet>

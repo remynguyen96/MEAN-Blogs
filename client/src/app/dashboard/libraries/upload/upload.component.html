@@ -1,0 +1,37 @@
+<form [formGroup]='formData' (submit)='uploadFile()'>
+  <div fxLayout='column' fxLayoutGap='25px' fxLayoutWrap>
+
+    <md-input-container fxFlex="100">
+      <input mdInput #characterCount maxLength="120" placeholder="Caption Images" formControlName='caption'>
+      <md-error>This field is required</md-error>
+      <md-hint align="end" aria-live="polite">
+        {{characterCount.value.length}} / 120
+      </md-hint>
+      <md-icon mdSuffix>mode_edit</md-icon>
+    </md-input-container>
+
+    <div fxFlex="100">
+      <!-- <div formArrayName='images'>
+        <ng-container>
+
+        </ng-container>
+      </div> -->
+      <input type="file" formControlName='images' (change)="onFiles($event)"  accept=".jpg,.png,.svg,.jpeg,.gif" #imagesUpload>
+      <ng-container *ngIf='listImages.length > 0, else imgHolder'>
+        <ng-container *ngFor='let image of listImages'>
+            <img [src]="image" alt="loading-images">
+        </ng-container>
+      </ng-container>
+      <ng-template #imgHolder>
+        <img [src]="imagePlaceholder" alt="loading-images">
+      </ng-template>
+      <button type="button" md-mini-fab color='primary' (click)='uploadInput()'><md-icon>cloud_upload</md-icon></button>
+    </div>
+
+    <div fxFlex='100'>
+      <button type='submit' [disabled]='!formData.valid' md-raised-button color='accent'>Upload Images</button>
+    </div>
+  </div>
+</form>
+
+<p>{{formData.value | json}}</p>

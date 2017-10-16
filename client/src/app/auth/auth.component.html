@@ -1,0 +1,38 @@
+<!-- <a md-icon-button routerLink='/' class='homepage'><md-icon>home</md-icon></a> -->
+<!-- NOTE: Header Bg image -->
+<header class='bgImages'></header>
+
+<div class="container-auth" fxLayout="row">
+  <section class="introAuth mat-typography">
+    <!-- NOTE: Btn Menu Auth -->
+    <button md-icon-button class="optionOrthers" (click)="menuAuth.toggle()">
+        <md-icon>menu</md-icon>
+    </button>
+    <md-sidenav-container fxFlex>
+      <!-- NOTE: Options Menu Auth-->
+        <md-sidenav #menuAuth mode="push" fxFlex="11em">
+        <nav md-tab-nav-bar>
+          <a md-tab-link *ngFor="let tab of listRouter" [routerLink]="tab.link" routerLinkActive='activeAuth' (click)='linkAuth(tab)'>
+            {{tab.name}}
+          </a>
+        </nav>
+      </md-sidenav>
+      <md-card fxFlex="480px">
+        <!-- NOTE: Title Page -->
+        <md-card-title class='titleAuth'>{{titleAuth}}</md-card-title>
+        <md-card-content>
+          <!-- NOTE: Router Page -->
+          <router-outlet></router-outlet>
+        </md-card-content>
+        <!-- NOTE: Progress Login -->
+        <div class='progressAuth' *ngIf="loading">
+          <md-progress-bar mode="indeterminate" color="primary"></md-progress-bar>
+        </div>
+      </md-card>
+    </md-sidenav-container>
+  </section>
+</div>
+<!-- NOTE: Footer Page -->
+<footer fxLayout="column" fxLayoutWrap fxLayoutAlign='space-around' class='footerAuth'>
+  <div>© 2017 blogs lá xanh, được thực hiện bởi Nguyễn Tiết Ngọc Châu</div>
+</footer>

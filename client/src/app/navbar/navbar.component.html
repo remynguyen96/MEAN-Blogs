@@ -1,0 +1,77 @@
+<md-sidenav-container>
+  <!-- NOTE: Menu Sidenav  -->
+  <md-sidenav #menu mode="push">
+    <!-- NOTE: menu tab contact me -->
+    <md-tab-group>
+      <md-tab>
+        <ng-template md-tab-label>
+          About Me
+          <md-icon class="icon">person</md-icon>
+        </ng-template>
+        <!-- NOTE: About Me -->
+        <div class='aboutMe' fxLayout="row" fxLayoutAlign="space-around center">
+          <div fxFlex="30">
+            <a target="_blank" href="https://www.facebook.com/remynguyen1996">
+                <img src="assets/remy.jpg" alt="Remy Nguyen">
+              </a>
+          </div>
+          <section class="mat-typography" fxFlex="70">
+            <h3>Nguyễn Tiết Ngọc Châu ✪</h3>
+            <md-icon>place_on</md-icon>
+            <p> Hồ Chí Minh City, Việt Nam</p>
+            <md-icon>email</md-icon><a href="mailto:nguyentietngocchau@gmail.com">
+                nguyentietngocchau@gmail.com
+              </a>
+          </section>
+          <i class="material-icons"></i>
+        </div>
+        <!-- NOTE: Introduce Site -->
+        <section class='mat-typography introduceSite'>
+          <p>
+            Dù đã có rất nhiều website chia sẽ về những câu chuyện trong cuộc sống nhưng tôi vẫn muốn tổng hợp lại những bài viết hữu ích nhất đễ chia sẽ với mọi người. Và tôi luôn tự nhắc nhở bản thân những gì tôi làm là vì lợi ích của cộng đồng, nhưng bản thân
+            tôi chỉ là cá nhân với đầy sự ham thích, và ý kiến riêng, vì vậy sẽ không khó tránh khỏi những thiếu xót và rất khó để có thể làm hài lòng mọi người, vì vậy tôi luôn muốn nhận được những ý kiến đóng góp chân tình từ cộng đồng. Có như vậy tôi
+            mới có thể làm tốt hơn công việc của mình.
+          </p>
+          <p>Mọi chi tiết xin liên hệ đến nguyentietngocchau@gmail.com</p>
+          <p>Xin cảm ơn các bạn đã ủng hộ các bài viết trên website.</p>
+        </section>
+      </md-tab>
+
+      <md-tab>
+        <ng-template md-tab-label>
+          Settings Theme
+          <md-icon class="icon">settings</md-icon>
+        </ng-template>
+        <!-- NOTE: Settings Themes -->
+        <div class="settingsTheme" fxLayout='column' fxLayoutWrap fxLayoutGap="15px">
+          <md-slide-toggle color='accent' [checked]="darkingTheme" [(ngModel)]="darkingTheme" (click)="darkTheme()" fxFlex>Dark Theme</md-slide-toggle>
+        </div>
+      </md-tab>
+    </md-tab-group>
+  </md-sidenav>
+
+  <!-- NOTE: logo, menu blogs, search blogs -->
+  <div #menuRoot>
+    <md-toolbar color="primary">
+      <button md-icon-button (click)="toggleMenu(menu)">
+            <md-icon>menu</md-icon>
+          </button>
+      <a fxLayout="row" [routerLink]="'/'">
+          <img src="assets/logo.svg" alt="Logo">
+          <h1>Lá Xanh</h1>
+        </a>
+      <!-- NOTE: Menu Tab Routing -->
+      <nav>
+        <a md-ripple mdRippleRadius="25" *ngFor="let router of routes" [routerLink]='router.link' routerLinkActive='active'>
+              {{router.label}}
+          </a>
+      </nav>
+      <span fxFlex></span>
+      <!-- NOTE: Search Blogs -->
+      <button md-icon-button (click)="searchBlogs()">
+          <md-icon>search</md-icon>
+        </button>
+      <a [routerLink]='"/auth"'>Đăng nhập</a>
+    </md-toolbar>
+  </div>
+</md-sidenav-container>

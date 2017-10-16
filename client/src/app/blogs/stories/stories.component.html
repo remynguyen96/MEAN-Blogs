@@ -1,0 +1,32 @@
+<div class="containerPage" fxLayout="row" fxLayoutWrap fxLayoutGap="15px">
+  <!-- NOTE: Setup View Blogs -->
+  <div fxFlex="100" class='viewBlogs'>
+    <button md-icon-button (click)="viewStream()"><md-icon>view_stream</md-icon></button>
+    <button md-icon-button (click)="viewModule()" class="active"><md-icon>view_module</md-icon></button>
+  </div>
+  <!-- NOTE: Card Post -->
+  <md-card fxFlex class="mat-elevation-z18" *ngFor="let item of listStories; let key = index">
+    <a [routerLink]="item.slug" class='linkBlogs material-icons'>
+                <img md-card-image [src]="urlService +'blogs/'+ item.images" [alt]="item.title">
+              </a>
+    <div fxLayout="column">
+      <a class="favorites" md-fab (click)='favoriteBlogs(item._id,key)'>
+        <md-icon>favorite_border</md-icon>
+      </a>
+      <md-card-content fxLayout="row" fxLayoutAlign="space-around center" fxLayoutGap="10px">
+        <button type="button" md-icon-button (click)="toggleMenu(menu)">
+                    <img fxFlex md-card-avatar [src]="urlService +'avatars/'+ item.author.avatar" alt="products">
+                  </button>
+        <div fxFlex="90">
+          <a [routerLink]="item.slug">
+            <md-card-title>{{item.title}}</md-card-title>
+          </a>
+          <md-card-subtitle (click)="toggleMenu(menu)">{{item.author.name}}</md-card-subtitle>
+        </div>
+      </md-card-content>
+      <a class="date" md-icon-button [mdTooltip]="'Đăng ngày:'+ transformDate(item.createdAt)">
+        <md-icon>bookmark</md-icon>
+      </a>
+    </div>
+  </md-card>
+</div>

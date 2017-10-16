@@ -1,0 +1,43 @@
+<form [formGroup]="formSignUp" (submit)="signUp()">
+  <md-input-container>
+    <input type="text" mdInput placeholder="Họ tên" formControlName='name'>
+  </md-input-container>
+
+  <!-- <md-input-container>
+    <input type="text" mdInput autocomplete="off" placeholder="Username" formControlName="username" (blur)="checkUsername()">
+  </md-input-container> -->
+  <!-- Validation -->
+  <!-- <ul *ngIf="formSignUp.get('username').errors">
+    <li *ngIf="formSignUp.get('username').errors?.required && (formSignUp.get('username').dirty || formSignUp.get('username').touched )">This field is required</li>
+
+    <li *ngIf="formSignUp.get('username').errors?.minlength && formSignUp.get('username').dirty || formSignUp.get('username').errors?.maxlength && formSignUp.get('username').dirty ">Minimum characters: 3, Maximum characters: 15</li>
+
+    <li *ngIf="formSignUp.get('username').errors?.validateUsername && formSignUp.get('username').dirty">Username must not have any special characters</li>
+  </ul> -->
+
+  <md-input-container>
+    <input type="text" mdInput placeholder="Địa chỉ email" formControlName='email'>
+  </md-input-container>
+
+  <md-input-container>
+    <input type="password" mdInput placeholder="Mật khẩu" formControlName='password'>
+  </md-input-container>
+  <i class="fa fa-info" aria-hidden="true" mdTooltip="Mật khẩu tối thiệu 5 ký tự và chứa 1 ký tự đặc biệt" mdTooltipPosition="below"></i>
+
+  <md-input-container>
+    <input type="password" mdInput placeholder="Xác nhận mật khẩu" formControlName='passwordConfirm'>
+  </md-input-container>
+  <!-- NOTE: Err Confirm Password -->
+  <div *ngIf="formSignUp.errors && !formSignUp.get('passwordConfirm').errors">
+    <label *ngIf="formSignUp.errors.confirmPassword" class="err">
+          Mật khẩu không trùng khớp !
+      </label>
+  </div>
+
+  <div class="btn">
+    <!-- <button type="submit" md-raised-button color="primary"> -->
+    <button type="submit" [disabled]='!formSignUp.valid' md-raised-button color="primary">
+        Sign Up
+      </button>
+  </div>
+</form>
