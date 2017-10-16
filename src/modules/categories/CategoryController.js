@@ -1,4 +1,4 @@
-import Category from './Category';
+import Category from "./Category";
 
 export async function listCategory(req, res) {
   const skip = parseInt(req.query.skip, 0);
@@ -32,9 +32,9 @@ export async function addCategory(req, res) {
 export async function editCategory(req, res) {
   try {
     const category = await Category.findById(req.params.id);
-        Object.keys(req.body).forEach(key => {
-          category[key] = req.body[key]
-        });
+    Object.keys(req.body).forEach(key => {
+      category[key] = req.body[key];
+    });
     return res.status(200).json(await category.save());
   } catch (e) {
     return res.status(400).json(e);
@@ -45,7 +45,7 @@ export async function removeCategory(req, res) {
   try {
     const category = await Category.findById(req.params.id);
     await category.remove();
-    return res.status(200).json('success');
+    return res.status(200).json("success");
   } catch (e) {
     return res.status(400).json(e);
   }
