@@ -65,11 +65,11 @@ export async function signUp(req, res) {
     // req.body.ipAddress = decryptCode(req.body.ipAddress);
     // req.body.password = decryptCode(req.body.password);
     // req.body.passwordConfirm = decryptCode(req.body.passwordConfirm);
-    req.checkBody('name','Name is required').notEmpty();
-    req.checkBody('ipAddress','Ip address is not valid').isIP();
-    req.checkBody('email','Invalid email').isEmail();
-    req.checkBody('password','Password is required').notEmpty();
-    req.checkBody('passwordConfirm','Password confirm is not match').equals(req.body.password);
+    // req.checkBody('name','Name is required').notEmpty();
+    // req.checkBody('ipAddress','Ip address is not valid').isIP();
+    // req.checkBody('email','Invalid email').isEmail();
+    // req.checkBody('password','Password is required').notEmpty();
+    // req.checkBody('passwordConfirm','Password confirm is not match').equals(req.body.password);
     const errors = req.validationErrors();
     if(errors) {
       const messages = [];
@@ -83,7 +83,6 @@ export async function signUp(req, res) {
     const user = await User.create(req.body);
     user.token = user.toAuthJSON().token;
     user.save();
-    console.log(user.token);
     const mailOptions = {
       from: `Demo Express Js With Remy Nguyen 👻 <remynguyen@enlightened.com>`,
       to: `${user.email}@gmail.com`,

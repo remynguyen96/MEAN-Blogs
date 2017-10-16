@@ -2,7 +2,7 @@
 import express from 'express';
 import path from 'path';
 import mongoose from 'mongoose';
-import validator from 'express-validator';
+// import validator from 'express-validator';
 import cookieParser from 'cookie-parser';
 import constants from './config/constants';
 import middleware from './config/middleware';
@@ -33,7 +33,7 @@ app.use('/images', express.static('src/uploads'))
 // NOTE: Setup Middleware
 middleware(app);
 // NOTE: Setup Router
-app.use(validator());
+// app.use(validator());
 apiRoutes(app);
 
 // app.use(express.static(path.join(__dirname, 'src/views'))); --> not working

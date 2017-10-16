@@ -43,6 +43,8 @@ export class AuthService extends GlobalService {
              .catch(this.handleError);
   }
 
+
+
   // strRandom(number: number): string {
   //   let token = '';
   //   let possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
