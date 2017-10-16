@@ -1,21 +1,21 @@
-import passport from 'passport';
-import LocalStrategy from 'passport-local';
-import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt';
+import passport from "passport";
+import LocalStrategy from "passport-local";
+import { Strategy as JwtStrategy, ExtractJwt } from "passport-jwt";
 
-import User from '../modules/users/User';
-import CryptoJS from 'crypto-js';
-import constants from './constants';
+import User from "../modules/users/User";
+import CryptoJS from "crypto-js";
+import constants from "./constants";
 
 const iv = CryptoJS.enc.Base64.parse(constants.IV);
-const passportCode   = constants.PASSPORTCODE;
+const passportCode = constants.PASSPORTCODE;
 
 function decryptCode(code) {
-  const decrypted = CryptoJS.AES.decrypt(code, passportCode, {iv});
+  const decrypted = CryptoJS.AES.decrypt(code, passportCode, { iv });
   return decrypted.toString(CryptoJS.enc.Utf8);
 }
 
 const localOpts = {
-  usernameField: 'email',
+  usernameField: "email"
   // passwordField: 'password',
   // passReqToCallback: true,
 };
@@ -35,14 +35,14 @@ const localStrategy = new LocalStrategy(
     } catch (e) {
       return done(e, false);
     }
-  },
+  }
 );
 // Jwt strategy
 
 const jwtOpts = {
   // jwtFromRequest: ExtractJwt.fromAuthHeader('authorization'),
-  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme('JWT'),
-  secretOrKey: constants.JWT_SECRET,
+  jwtFromRequest: ExtractJwt.fromAuthHeaderWithScheme("JWT"),
+  secretOrKey: constants.JWT_SECRET
 };
 
 const jwtStrategy = new JwtStrategy(jwtOpts, async (payload, done) => {
@@ -60,5 +60,5 @@ const jwtStrategy = new JwtStrategy(jwtOpts, async (payload, done) => {
 passport.use(localStrategy);
 passport.use(jwtStrategy);
 
-export const authLocal = passport.authenticate('local', { session: false });
-export const authJwt = passport.authenticate('jwt', { session: false });
+export const authLocal = passport.authenticate("local", { session: false });
+export const authJwt = passport.authenticate("jwt", { session: false });
